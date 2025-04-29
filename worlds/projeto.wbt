@@ -1,0 +1,51 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/factory/containers/protos/WoodenBox.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.7538038454066435 0.03637641409491128 0.6560918526759439 3.296051220379204
+  position -0.1125557977026925 0.42522175695645015 3.583179192526616
+}
+TexturedBackground {
+}
+RectangleArena {
+  name "rectangle arena(1)"
+}
+DirectionalLight {
+  direction 0 -1 0
+  intensity 3
+}
+TexturedBackgroundLight {
+}
+E-puck {
+  hidden position_0_0 2350.9476111044128
+  hidden position_0_1 2398.5494153359605
+  hidden linearVelocity_0 4.406621351205426e-07 5.897711149149191e-06 -0.0002985341876355511
+  hidden angularVelocity_0 -0.0003958169067385237 2.9574812570885393e-05 4.3085121304691496e-08
+  hidden translation_1 0 0.025999999999999975 0.02
+  hidden rotation_1 0 1 0 1.0363062192474297
+  hidden linearVelocity_1 -0.0035806878635131784 0.00038621538859138225 0.001480943199529075
+  hidden angularVelocity_1 6.11841458050416 1.422393356970587 -0.08880209051268151
+  hidden translation_2 0 -0.026000000000000037 0.02
+  hidden rotation_2 0 -1 0 1.6273720066415591
+  hidden linearVelocity_2 0.0035666615089698607 -0.00039310398239687447 0.0015420393476801434
+  hidden angularVelocity_2 -6.119344715966149 -1.4217847639794445 -0.08846272806203445
+  translation 0.46299034467078604 -0.4314222312795403 -0.00012459117749216188
+  rotation 3.465180693690979e-05 2.289451622789655e-05 -0.9999999991375467 1.3174573683643236
+  controller "robot_controller"
+  supervisor TRUE
+}
+DEF Caixa WoodenBox {
+  hidden linearVelocity_0 7.228290272336624e-18 7.918604855225162e-18 -3.473164310341771e-17
+  hidden angularVelocity_0 5.482425519104988e-29 -9.841039792632122e-29 8.866649714433847e-17
+  translation -0.21080000000000082 -0.38749599999999845 0.024980379999999996
+  rotation 0.9999927585904539 -0.003805623031013538 -2.784815495612393e-17 3.141592653589793
+  size 0.05 0.05 0.05
+  mass 0.05
+}
