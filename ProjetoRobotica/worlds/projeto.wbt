@@ -1,16 +1,15 @@
-#VRML_SIM R2023b utf8
+#VRML_SIM R2025a utf8
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/factory/containers/protos/WoodenBox.proto"
 
 WorldInfo {
 }
 Viewpoint {
   orientation -0.6713914068139812 0.02197166317540866 0.7407771762639895 3.1900980372152885
-  position 0.18272349163554502 0.14641479532298488 2.4807662552038656
+  position 0.20841051312492118 0.16358918457567495 2.741533549442642
 }
 TexturedBackground {
 }
@@ -23,48 +22,43 @@ DirectionalLight {
 }
 TexturedBackgroundLight {
 }
-DEF robo E-puck {
-  translation -0.0252026 -0.00210909 -6.4268e-05
-  controller "robot_controller"
-  supervisor TRUE
-}
 DEF caixa_1 WoodenBox {
-  translation 0.24999999999999997 0.2499999999998558 0.024980378046003362
-  rotation 5.959116166971997e-05 -1.675361932663147e-09 0.9999999982244466 1.0197204350812362e-07
+  translation 0.24999999999999997 0.25000000000000755 0.02498037999806608
+  rotation 5.832228631896089e-08 6.271183845070051e-10 0.9999999999999983 1.0197204321030092e-07
   size 0.05 0.05 0.05
   mass 0.05
 }
 DEF caixa_2 WoodenBox {
-  translation 0.24999999989262642 3.6867691085852845e-08 0.029976455740004997
-  rotation 0.0005032747420781988 1.3773767069065283e-06 -0.9999998733563104 1.8802318133857468e-05
+  translation 0.24999999989185293 3.715128037015665e-08 0.02980396990565878
+  rotation 5.188698761749331e-07 1.415127552451662e-09 -0.9999999999998653 1.8802315752675366e-05
   name "caixa_2"
   size 0.06 0.06 0.06
   mass 0.5
 }
 DEF caixa_3 WoodenBox {
-  translation 0.25 -0.25 0.0299765
-  rotation 0.9860326925758802 0.16655188126666343 -4.2538186727450364e-06 2.1489622089925732e-11
+  translation 0.24999999999989272 -0.24999999999936506 0.029976456043542297
+  rotation 0.9853696967796267 0.17041099463246417 -0.002579452810424677 2.128224505187591e-14
   name "caixa_2(1)"
   size 0.06 0.06 0.06
   mass 0.06
 }
 DEF caixa_4 WoodenBox {
-  translation -0.25 0.25 0.0299764
-  rotation 0 0 -1 0
+  translation -0.25 0.25 0.02980396985080661
+  rotation 0.34233630796828723 -0.9128968212487614 -0.222317894017888 2.0755693136292347e-16
   name "caixa_2(2)"
   size 0.06 0.06 0.06
   mass 0.5
 }
 DEF caixa_5 WoodenBox {
-  translation -0.25 0 0.0299763
-  rotation 0 0 -1 0
+  translation -0.25 -4.793341387904489e-19 0.029976455845622755
+  rotation -0.34556407693349206 0.9215042051559797 -0.17724409330905616 2.1418565542213109e-16
   name "caixa_2(3)"
   size 0.06 0.06 0.06
   mass 0.06
 }
 DEF caixa_6 WoodenBox {
-  translation -0.25 -0.25 0.0299758
-  rotation 0 0 -1 0
+  translation -0.25 -0.25 0.029803969260363477
+  rotation -0.5381791677448726 0.17939305591495877 0.8235176469845249 1.3202717205451862e-16
   name "caixa_2(4)"
   size 0.06 0.06 0.06
   mass 0.5
