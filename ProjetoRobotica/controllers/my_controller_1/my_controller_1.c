@@ -1,120 +1,111 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #include <math.h>
-
 #include <webots/robot.h>
 #include <webots/motor.h>
 #include <webots/distance_sensor.h>
-#include <webots/led.h>
 #include <webots/supervisor.h>
 
 #define TIME_STEP 32
-#define QtddSensoresProx 8
-#define QtddLeds 10
-#define TamanhoTexto 256
-#define QtddCaixas 20
+#define NUM_SENSORS 8
+#define MAX_SPEED 6.28
+#define NUM_BOXES 20
 
 int main() {
   int i;
-  char texto[TamanhoTexto] = {0};
-  double LeituraSensorProx[QtddSensoresProx];
-
   wb_robot_init();
 
-  // Referência ao próprio robô
-  WbNodeRef robo = wb_supervisor_node_get_self();
+  srand(time(NULL)); // Para movimentos aleatórios
 
-  // Motores
-  WbDeviceTag MotorEsquerdo = wb_robot_get_device("left wheel motor");
-  WbDeviceTag MotorDireito = wb_robot_get_device("right wheel motor");
-  wb_motor_set_position(MotorEsquerdo, INFINITY);
-  wb_motor_set_position(MotorDireito, INFINITY);
-  wb_motor_set_velocity(MotorEsquerdo, 0);
-  wb_motor_set_velocity(MotorDireito, 0);
+  // Dispositivos
+  WbDeviceTag left_motor = wb_robot_get_device("left wheel motor");
+  WbDeviceTag right_motor = wb_robot_get_device("right wheel motor");
+  wb_motor_set_position(left_motor, INFINITY);
+  wb_motor_set_position(right_motor, INFINITY);
+  wb_motor_set_velocity(left_motor, 0);
+  wb_motor_set_velocity(right_motor, 0);
 
-  // Sensores de proximidade
-  WbDeviceTag SensorProx[QtddSensoresProx];
-  char nomeSensor[10];
-  for(i = 0; i < QtddSensoresProx; i++) {
-    sprintf(nomeSensor, "ps%d", i);
-    SensorProx[i] = wb_robot_get_device(nomeSensor);
-    wb_distance_sensor_enable(SensorProx[i], TIME_STEP);
+  WbDeviceTag prox[NUM_SENSORS];
+  char sensor_name[5];
+  for (i = 0; i < NUM_SENSORS; i++) {
+    sprintf(sensor_name, "ps%d", i);
+    prox[i] = wb_robot_get_device(sensor_name);
+    wb_distance_sensor_enable(prox[i], TIME_STEP);
   }
 
-  // LED
-  WbDeviceTag Leds[QtddLeds];
-  Leds[0] = wb_robot_get_device("led0");
-  wb_led_set(Leds[0], 1);
+  // Supervisor
+  WbNodeRef self = wb_supervisor_node_get_self();
 
-  // Carrega referências às caixas
-  WbNodeRef caixas[QtddCaixas];
-  char nomeCaixa[16];
-  for (i = 0; i < QtddCaixas; i++) {
-    sprintf(nomeCaixa, "CAIXA%d", i + 1);
-    caixas[i] = wb_supervisor_node_get_from_def(nomeCaixa);
+  // Caixas
+  WbNodeRef caixas[NUM_BOXES];
+  const double *caixa_pos_ant[NUM_BOXES];
+  char def[16];
+  for (i = 0; i < NUM_BOXES; i++) {
+    sprintf(def, "CAIXA%d", i + 1);
+    caixas[i] = wb_supervisor_node_get_from_def(def);
+    caixa_pos_ant[i] = (caixas[i]) ? wb_supervisor_node_get_position(caixas[i]) : NULL;
   }
 
-  // Loop principal
+  // Movimento aleatório inicial
+  double v_left = ((double)(rand() % 100) / 100.0) * MAX_SPEED;
+  double v_right = ((double)(rand() % 100) / 100.0) * MAX_SPEED;
+  wb_motor_set_velocity(left_motor, v_left);
+  wb_motor_set_velocity(right_motor, v_right);
+
+  bool colidiu = false;
+  int timer = 100; // tempo andando aleatoriamente
+
   while (wb_robot_step(TIME_STEP) != -1) {
-    // Pisca o LED
-    wb_led_set(Leds[0], !wb_led_get(Leds[0]));
+    // Lê sensores
+    int bateu = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      double val = wb_distance_sensor_get_value(prox[i]);
+      if (val > 80.0) bateu = 1;
+    }
 
-    // Lê posição do robô
-    const double *posRobo = wb_supervisor_node_get_position(robo);
+    if (!colidiu && bateu) {
+      colidiu = true;
+      printf("COLIDIU!\n");
 
-    // Encontra a caixa mais próxima
-    const double *posMaisPerto = NULL;
-    double menorDistancia = 1e9;
-    for (i = 0; i < QtddCaixas; i++) {
-      const double *posCaixa = wb_supervisor_node_get_position(caixas[i]);
-      double dx = posCaixa[0] - posRobo[0];
-      double dz = posCaixa[2] - posRobo[2];
-      double dist = sqrt(dx * dx + dz * dz);
-      if (dist < menorDistancia) {
-        menorDistancia = dist;
-        posMaisPerto = posCaixa;
+      // Espera 1 segundo para caixa se mover
+      int t;
+      for (t = 0; t < 30; t++) wb_robot_step(TIME_STEP);
+
+      for (i = 0; i < NUM_BOXES; i++) {
+        if (!caixas[i] || !caixa_pos_ant[i]) continue;
+        const double *nova_pos = wb_supervisor_node_get_position(caixas[i]);
+
+        if (nova_pos && (
+            fabs(nova_pos[0] - caixa_pos_ant[i][0]) > 0.01 ||
+            fabs(nova_pos[2] - caixa_pos_ant[i][2]) > 0.01)) {
+          // A caixa se moveu
+          printf("Caixa %d se moveu! DANÇA!\n", i + 1);
+
+          // Dança: gira no próprio eixo
+          for (int j = 0; j < 100; j++) {
+            wb_motor_set_velocity(left_motor, MAX_SPEED);
+            wb_motor_set_velocity(right_motor, -MAX_SPEED);
+            wb_robot_step(TIME_STEP);
+          }
+          break;
+        }
       }
+
+      // Para após dançar
+      wb_motor_set_velocity(left_motor, 0);
+      wb_motor_set_velocity(right_motor, 0);
+      break;
     }
 
-    // Calcula direção para a caixa
-    double dx = posMaisPerto[0] - posRobo[0];
-    double dz = posMaisPerto[2] - posRobo[2];
-    double angulo = atan2(dz, dx);
-
-    // Calcula direção atual do robô (aproximado pelo eixo Z)
-    const double *orientacao = wb_supervisor_node_get_orientation(robo);
-    double dirRoboX = orientacao[0];
-    double dirRoboZ = orientacao[2];
-    double anguloRobo = atan2(dirRoboZ, dirRoboX);
-
-    double erro = angulo - anguloRobo;
-
-    // Normaliza o ângulo entre -PI e PI
-    while (erro > M_PI) erro -= 2 * M_PI;
-    while (erro < -M_PI) erro += 2 * M_PI;
-
-    double vEsq = 3.0;
-    double vDir = 3.0;
-
-    // Ajuste para girar em direção à caixa
-    if (fabs(erro) > 0.2) {
-      vEsq = -erro * 5;
-      vDir = erro * 5;
+    // Anda aleatoriamente no começo
+    if (!colidiu && timer-- == 0) {
+      v_left = ((double)(rand() % 100) / 100.0) * MAX_SPEED;
+      v_right = ((double)(rand() % 100) / 100.0) * MAX_SPEED;
+      wb_motor_set_velocity(left_motor, v_left);
+      wb_motor_set_velocity(right_motor, v_right);
+      timer = 100 + rand() % 100;
     }
-
-    // Evita valores fora do limite
-    if (vEsq > 6.28) vEsq = 6.28;
-    if (vEsq < -6.28) vEsq = -6.28;
-    if (vDir > 6.28) vDir = 6.28;
-    if (vDir < -6.28) vDir = -6.28;
-
-    wb_motor_set_velocity(MotorEsquerdo, vEsq);
-    wb_motor_set_velocity(MotorDireito, vDir);
-
-    // Debug
-    sprintf(texto, "Caixa alvo: x=%.2f z=%.2f | Robo: x=%.2f z=%.2f | erro=%.2f",
-            posMaisPerto[0], posMaisPerto[2], posRobo[0], posRobo[2], erro);
-    printf("%s\n", texto);
   }
 
   wb_robot_cleanup();
