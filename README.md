@@ -1,6 +1,6 @@
 # Projeto de Robótica
 ## Membros do grupo
-Alan Daiki Suga RA: 22.125.094-7
+Alan Daiki Suga RA: 22.125.094-7 <br>
 Pedro Henrique Lega Kramer Costa RA: 22.125.091-3
 
 # Observações
